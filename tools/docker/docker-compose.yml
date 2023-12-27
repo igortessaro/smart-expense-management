@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  mongo-db:
+    image: mongo
+    container_name: mongo-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: Pa55w0rd
+    ports:
+      - "27017:27017"
+    networks:
+      - sem-network
+  web:
+    container_name: smart-expense-management-web
+    build:
+      context: ../../src/web/
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    networks:
+      - sem-network
+  api:
+    container_name: smart-expense-management-api
+    build:
+      context: ../../src/api/
+      dockerfile: Dockerfile
+    ports:
+      - "5224:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - mongo-db
+    networks:
+      - sem-network
+
+networks:
+    sem-network:
+      driver: bridge

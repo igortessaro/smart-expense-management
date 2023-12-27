@@ -1,0 +1,78 @@
+<form [formGroup]="formAddExpense" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <div class="col">
+            <input type="text" formControlName="description" class="form-control" placeholder="Descricao" />
+        </div>
+        <div class="col">
+            <input type="text" formControlName="value" class="form-control" placeholder="Valor" />
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary" [disabled]="formAddExpense.invalid">Adicionar</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <caption>
+        Lista de Despesas
+    </caption>
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Descricao</th>
+            <th scope="col">Valor</th>
+            <th scope="col">Data Criacao</th>
+            <th scope="col">Acoes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let expense of expenses">
+            <th scope="row">{{expense.id}}</th>
+            <td>{{expense.description}}</td>
+            <td>{{expense.value | currency}}</td>
+            <td>{{expense.createdAt | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+            <td>
+                <a class="bi bi-pencil-square" (click)="open(editExpenseModal, expense)"></a>
+                <a class="bi bi-trash" (click)="deleteExpense(expense.id)"></a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<ng-template #editExpenseModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Editar Gasto</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="formEditExpense" (ngSubmit)="onSubmitEdit()">
+            <div class="row">
+                <div class="form-group" *ngIf="false">
+                    <label for="id">User Uuid</label>
+                    <input type="text" formControlName="userUuid" class="form-control" [disabled]="true" />
+                </div>
+                <div class="form-group" *ngIf="false">
+                    <label for="id">Id</label>
+                    <input type="text" formControlName="userUuid" class="form-control" [disabled]="true" />
+                </div>
+                <div class="form-group">
+                    <label for="description">Descricao</label>
+                    <input type="text" formControlName="description" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="value">Valor</label>
+                    <input type="text" formControlName="value" class="form-control"/>
+                </div>
+                <div class="form-group" *ngIf="false">
+                    <label for="createdAt">Data de Criacao</label>
+                    <input type="text" formControlName="createdAt" class="form-control" [disabled]="true"/>
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary" [disabled]="formEditExpense.invalid">Salvar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+    </div>
+</ng-template>
