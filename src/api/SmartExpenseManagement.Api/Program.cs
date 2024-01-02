@@ -10,13 +10,14 @@ var headersExposed = new[] { "Date", "Content-Type", "Content-Disposition", "Con
 
 var builder = WebApplication.CreateBuilder(args);
 
+var apiKey = builder.Configuration.GetSection("ApiKey").ToString() ?? string.Empty;
+
 // Add services to the container.
 _ = builder.Services.AddScoped<IUserRepository, UserRepository>();
 _ = builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 _ = builder.Services.AddScoped<ITokenService, TokenService>();
 
 _ = builder.Services.AddControllers();
-var key = Encoding.ASCII.GetBytes("fedaf7d8863b48e197b9287d492b708e");
 _ = builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -28,8 +29,7 @@ _ = builder.Services.AddAuthentication(x =>
         x.SaveToken = true;
         x.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(apiKey)),
             ValidateIssuer = false,
             ValidateAudience = false
         };

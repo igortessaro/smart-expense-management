@@ -13,23 +13,38 @@ public interface ITokenService
 
 public sealed class TokenService : ITokenService
 {
-    private readonly string secret = "fedaf7d8863b48e197b9287d492b708e";
+    private readonly IConfiguration _configuration;
+
+    public TokenService(IConfiguration configuration)
+    {
+        this._configuration = configuration;
+    }
 
     public string GenerateToken(User user)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(secret);
+        var apiKey = this._configuration.GetSection("ApiKey").ToString() ?? string.Empty;
+        var handler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(apiKey);
+        var credentials = new SigningCredentials(
+            new SymmetricSecurityKey(key),
+            SecurityAlgorithms.HmacSha256Signature);
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-                    new Claim(ClaimTypes.Name, user.UserName.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role.ToString())
-            }),
+            Subject = GenerateClaims(user),
             Expires = DateTime.UtcNow.AddHours(2),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = credentials,
         };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        var token = handler.CreateToken(tokenDescriptor);
+        return handler.WriteToken(token);
+    }
+
+    private static ClaimsIdentity GenerateClaims(User user)
+    {
+        var claimIdentity = new ClaimsIdentity();
+        claimIdentity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+        claimIdentity.AddClaim(new Claim(ClaimTypes.Role, user.Role));
+
+        return claimIdentity;
     }
 }
