@@ -2,12 +2,13 @@ using SmartExpenseManagement.Api.Commands;
 using SmartExpenseManagement.Api.Repository;
 using SmartExpenseManagement.Api.Repository.Entities;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SmartExpenseManagement.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ExpenseController : ControllerBase
 {
     private readonly ILogger<ExpenseController> _logger;
@@ -24,7 +25,7 @@ public class ExpenseController : ControllerBase
     {
         _logger.LogInformation("{Method}: starting to create a new expense({@Expense})", nameof(CreateAsync), expense);
 
-        var entity = new Expense(expense.UserUuid, expense.Description, expense.Value);
+        var entity = new Expense(expense.UserId, expense.Description, expense.Value);
         await _expenseRepository.AddAsync(entity);
 
         _logger.LogInformation("{Method}: the expense({@Expense}) was successfully created", nameof(CreateAsync), entity);

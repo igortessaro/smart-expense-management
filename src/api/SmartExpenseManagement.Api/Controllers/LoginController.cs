@@ -1,7 +1,7 @@
 using SmartExpenseManagement.Api.Commands;
 using SmartExpenseManagement.Api.Repository;
 using Microsoft.AspNetCore.Mvc;
-using System.Xml.Linq;
+using SmartExpenseManagement.Api.Services;
 
 namespace SmartExpenseManagement.Api.Controllers;
 
@@ -11,11 +11,13 @@ public class LoginController : ControllerBase
 {
     private readonly ILogger<LoginController> _logger;
     private readonly IUserRepository _userRepository;
+    private readonly ITokenService _tokenService;
 
-    public LoginController(ILogger<LoginController> logger, IUserRepository userRepository)
+    public LoginController(ILogger<LoginController> logger, IUserRepository userRepository, ITokenService tokenService)
     {
         _userRepository = userRepository;
         _logger = logger;
+        _tokenService = tokenService;
     }
 
     [HttpPost]
@@ -23,14 +25,16 @@ public class LoginController : ControllerBase
     {
         _logger.LogInformation("{Method}: starting to login ({@Login})", nameof(LoginAsync), login);
 
-        var user = await _userRepository.GetSingleAsync(x => x.Name.Equals(login.UserName, StringComparison.CurrentCultureIgnoreCase) && x.Password.Equals(login.Password));
+        var user = await _userRepository.GetSingleAsync(x => x.UserName.Equals(login.UserName, StringComparison.CurrentCultureIgnoreCase) && x.Password.Equals(login.Password));
 
         if (user is null)
         {
-            _logger.LogWarning("{Method}: no user finded by {@Login}", nameof(LoginAsync), login);
+            _logger.LogWarning("{Method}: user not found by {@Login}", nameof(LoginAsync), login);
             return Unauthorized();
         }
 
-        return Ok(user);
+        var token = _tokenService.GenerateToken(user);
+
+        return Ok(token);
     }
 }

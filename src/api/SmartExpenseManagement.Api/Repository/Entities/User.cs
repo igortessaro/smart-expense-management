@@ -5,17 +5,17 @@ namespace SmartExpenseManagement.Api.Repository.Entities;
 
 public sealed class User
 {
-    public User(string name, string password)
+    public User(string userName, string password, string role)
     {
-        Name = name;
+        UserName = userName;
         Password = password;
-        Uuid = Guid.NewGuid();
+        Role = role;
     }
 
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = string.Empty;
-    public Guid Uuid { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
+    public string UserName { get; set; }
+    public string Password { get; set; }
+    public string Role { get; set; }
 }

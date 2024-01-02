@@ -5,9 +5,9 @@ namespace SmartExpenseManagement.Api.Repository.Entities;
 
 public sealed class Expense
 {
-    public Expense(Guid userUuid, string description, decimal value)
+    public Expense(string userId, string description, decimal value)
     {
-        UserUuid = userUuid;
+        UserId = userId;
         Description = description;
         Value = value;
         CreatedAt = DateTime.UtcNow;
@@ -16,8 +16,8 @@ public sealed class Expense
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = string.Empty;
-    public Guid UserUuid { get; set; }
-    public string Description { get; set; } = string.Empty;
+    public string UserId { get; set; }
+    public string Description { get; set; }
     public decimal Value { get; set; }
     public DateTime CreatedAt { get; set; }
 }

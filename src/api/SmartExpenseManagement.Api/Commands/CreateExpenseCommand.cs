@@ -5,7 +5,7 @@ namespace SmartExpenseManagement.Api.Commands;
 public sealed class CreateExpenseCommand
 {
     [Required]
-    public Guid UserUuid { get; set; }
+    public string UserId { get; set; } = string.Empty;
     [Required]
     public string Description { get; set; } = string.Empty;
     [Required]

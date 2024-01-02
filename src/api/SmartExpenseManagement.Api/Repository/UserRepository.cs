@@ -15,7 +15,7 @@ public sealed class UserRepository : BaseRepository<User>, IUserRepository
         var updateDefBuilder = Builders<User>.Update;
         var updateDef = updateDefBuilder.Combine(new UpdateDefinition<User>[]
         {
-                updateDefBuilder.Set(x => x.Name, obj.Name),
+                updateDefBuilder.Set(x => x.UserName, obj.UserName),
                 updateDefBuilder.Set(x => x.Password, obj.Password)
         });
         await this._collection.FindOneAndUpdateAsync(filter, updateDef);
