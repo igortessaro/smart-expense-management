@@ -1,10 +1,11 @@
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using SmartExpenseManagement.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using SmartExpenseManagement.Api.Repository.Entities;
 
-namespace SmartExpenseManagement.Api.Services;
+namespace SmartExpenseManagement.Domain.Services;
 
 public interface ITokenService
 {
@@ -17,12 +18,12 @@ public sealed class TokenService : ITokenService
 
     public TokenService(IConfiguration configuration)
     {
-        this._configuration = configuration;
+        _configuration = configuration;
     }
 
     public string GenerateToken(User user)
     {
-        var apiKey = this._configuration.GetSection("ApiKey").ToString() ?? string.Empty;
+        var apiKey = _configuration.GetSection("ApiKey").ToString() ?? string.Empty;
         var handler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(apiKey);
         var credentials = new SigningCredentials(
@@ -42,8 +43,11 @@ public sealed class TokenService : ITokenService
     private static ClaimsIdentity GenerateClaims(User user)
     {
         var claimIdentity = new ClaimsIdentity();
-        claimIdentity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+        claimIdentity.AddClaim(new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"));
+        claimIdentity.AddClaim(new Claim("Login", user.Login));
         claimIdentity.AddClaim(new Claim(ClaimTypes.Role, user.Role));
+        claimIdentity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+        claimIdentity.AddClaim(new Claim("Id", user.Id));
 
         return claimIdentity;
     }

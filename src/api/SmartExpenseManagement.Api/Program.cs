@@ -1,9 +1,10 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using SmartExpenseManagement.Api.Options;
-using SmartExpenseManagement.Api.Repository;
-using SmartExpenseManagement.Api.Services;
+using SmartExpenseManagement.Domain.Options;
+using SmartExpenseManagement.Domain.Repositories;
+using SmartExpenseManagement.Domain.Services;
+using SmartExpenseManagement.Infrastructure.Repositories;
+using System.Text;
 
 const string originsPolicy = "AllowAllOrigins";
 var headersExposed = new[] { "Date", "Content-Type", "Content-Disposition", "Content-Length" };
@@ -15,6 +16,7 @@ var apiKey = builder.Configuration.GetSection("ApiKey").ToString() ?? string.Emp
 // Add services to the container.
 _ = builder.Services.AddScoped<IUserRepository, UserRepository>();
 _ = builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
+_ = builder.Services.AddScoped<IExpenseGroupRepository, ExpenseGroupRepository>();
 _ = builder.Services.AddScoped<ITokenService, TokenService>();
 
 _ = builder.Services.AddControllers();
@@ -43,6 +45,7 @@ _ = builder.Services.AddCors(options =>
 });
 _ = builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("MongoConnection"));
 _ = builder.Services.AddScoped<MongoContext>();
+_ = builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var app = builder.Build();
 

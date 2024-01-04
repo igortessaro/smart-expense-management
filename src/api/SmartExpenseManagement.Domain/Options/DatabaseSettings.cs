@@ -1,4 +1,4 @@
-namespace SmartExpenseManagement.Api.Options;
+namespace SmartExpenseManagement.Domain.Options;
 
 public sealed class DatabaseSettings
 {

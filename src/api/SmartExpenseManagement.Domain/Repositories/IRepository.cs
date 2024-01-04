@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace SmartExpenseManagement.Api.Repository;
+namespace SmartExpenseManagement.Domain.Repositories;
 
 public interface IRepository<T>
 {

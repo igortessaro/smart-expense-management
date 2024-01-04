@@ -1,7 +1,8 @@
-using SmartExpenseManagement.Api.Repository.Entities;
 using MongoDB.Driver;
+using SmartExpenseManagement.Domain.Entities;
+using SmartExpenseManagement.Domain.Repositories;
 
-namespace SmartExpenseManagement.Api.Repository;
+namespace SmartExpenseManagement.Infrastructure.Repositories;
 
 public sealed class UserRepository : BaseRepository<User>, IUserRepository
 {
@@ -15,11 +16,11 @@ public sealed class UserRepository : BaseRepository<User>, IUserRepository
         var updateDefBuilder = Builders<User>.Update;
         var updateDef = updateDefBuilder.Combine(new UpdateDefinition<User>[]
         {
-                updateDefBuilder.Set(x => x.UserName, obj.UserName),
+                updateDefBuilder.Set(x => x.Login, obj.Login),
                 updateDefBuilder.Set(x => x.Password, obj.Password)
         });
-        await this._collection.FindOneAndUpdateAsync(filter, updateDef);
+        await _collection.FindOneAndUpdateAsync(filter, updateDef);
 
-        return await this._collection.FindOneAndReplaceAsync(x => x.Id == obj.Id, obj);
+        return await _collection.FindOneAndReplaceAsync(x => x.Id == obj.Id, obj);
     }
 }

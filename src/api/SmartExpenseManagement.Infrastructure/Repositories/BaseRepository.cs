@@ -1,8 +1,8 @@
-using SmartExpenseManagement.Api.Repository.Entities;
 using MongoDB.Driver;
+using SmartExpenseManagement.Domain.Repositories;
 using System.Linq.Expressions;
 
-namespace SmartExpenseManagement.Api.Repository;
+namespace SmartExpenseManagement.Infrastructure.Repositories;
 
 public abstract class BaseRepository<T> : IRepository<T>
 {
@@ -10,12 +10,12 @@ public abstract class BaseRepository<T> : IRepository<T>
 
     public BaseRepository(MongoContext dbContext, string colletionName)
     {
-        this._collection = dbContext.Database.GetCollection<T>(colletionName);
+        _collection = dbContext.Database.GetCollection<T>(colletionName);
     }
 
     public async Task AddAsync(T obj)
     {
-        await this._collection.InsertOneAsync(obj);
+        await _collection.InsertOneAsync(obj);
     }
 
     public async Task DeleteAsync(Expression<Func<T, bool>> predicate)
@@ -25,19 +25,19 @@ public abstract class BaseRepository<T> : IRepository<T>
 
     public IQueryable<T> GetAll()
     {
-        return this._collection.AsQueryable();
+        return _collection.AsQueryable();
     }
 
     public async Task<IReadOnlyList<T>> GetAllAsync(Expression<Func<T, bool>> predicate)
     {
         var filter = Builders<T>.Filter.Where(predicate);
-        return (await this._collection.FindAsync(filter)).ToList();
+        return (await _collection.FindAsync(filter)).ToList();
     }
 
     public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate)
     {
         var filter = Builders<T>.Filter.Where(predicate);
-        return (await this._collection.FindAsync(filter)).FirstOrDefault();
+        return (await _collection.FindAsync(filter)).FirstOrDefault();
     }
 
     public abstract Task<T> UpdateAsync(T obj);

@@ -1,7 +1,8 @@
-using SmartExpenseManagement.Api.Repository.Entities;
 using MongoDB.Driver;
+using SmartExpenseManagement.Domain.Entities;
+using SmartExpenseManagement.Domain.Repositories;
 
-namespace SmartExpenseManagement.Api.Repository;
+namespace SmartExpenseManagement.Infrastructure.Repositories;
 
 public class ExpenseRepository : BaseRepository<Expense>, IExpenseRepository
 {
@@ -17,8 +18,8 @@ public class ExpenseRepository : BaseRepository<Expense>, IExpenseRepository
                 updateDefBuilder.Set(x => x.Description, obj.Description),
                 updateDefBuilder.Set(x => x.Value, obj.Value)
         });
-        await this._collection.FindOneAndUpdateAsync(filter, updateDef);
+        await _collection.FindOneAndUpdateAsync(filter, updateDef);
 
-        return await this._collection.FindOneAndReplaceAsync(x => x.Id == obj.Id, obj);
+        return await _collection.FindOneAndReplaceAsync(x => x.Id == obj.Id, obj);
     }
 }

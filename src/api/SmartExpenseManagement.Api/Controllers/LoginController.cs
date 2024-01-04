@@ -1,7 +1,7 @@
-using SmartExpenseManagement.Api.Commands;
-using SmartExpenseManagement.Api.Repository;
 using Microsoft.AspNetCore.Mvc;
-using SmartExpenseManagement.Api.Services;
+using SmartExpenseManagement.Domain.CQRS.Commands;
+using SmartExpenseManagement.Domain.Repositories;
+using SmartExpenseManagement.Domain.Services;
 
 namespace SmartExpenseManagement.Api.Controllers;
 
@@ -25,7 +25,9 @@ public class LoginController : ControllerBase
     {
         _logger.LogInformation("{Method}: starting to login ({@Login})", nameof(LoginAsync), login);
 
-        var user = await _userRepository.GetSingleAsync(x => x.UserName.Equals(login.UserName, StringComparison.CurrentCultureIgnoreCase) && x.Password.Equals(login.Password));
+        var user = await _userRepository.GetSingleAsync(x =>
+            (x.Login.Equals(login.Login, StringComparison.CurrentCultureIgnoreCase) || x.Email.Equals(login.Login, StringComparison.CurrentCultureIgnoreCase))
+            && x.Password.Equals(login.Password));
 
         if (user is null)
         {
@@ -35,6 +37,6 @@ public class LoginController : ControllerBase
 
         var token = _tokenService.GenerateToken(user);
 
-        return Ok(token);
+        return Ok(new { token });
     }
 }

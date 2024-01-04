@@ -1,8 +1,8 @@
-using SmartExpenseManagement.Api.Options;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using SmartExpenseManagement.Domain.Options;
 
-namespace SmartExpenseManagement.Api.Repository;
+namespace SmartExpenseManagement.Infrastructure.Repositories;
 
 public sealed class MongoContext
 {

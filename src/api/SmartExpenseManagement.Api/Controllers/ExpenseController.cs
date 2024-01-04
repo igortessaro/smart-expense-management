@@ -1,8 +1,8 @@
-using SmartExpenseManagement.Api.Commands;
-using SmartExpenseManagement.Api.Repository;
-using SmartExpenseManagement.Api.Repository.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SmartExpenseManagement.Domain.CQRS.Commands;
+using SmartExpenseManagement.Domain.Entities;
+using SmartExpenseManagement.Domain.Repositories;
 
 namespace SmartExpenseManagement.Api.Controllers;
 
@@ -13,11 +13,13 @@ public class ExpenseController : ControllerBase
 {
     private readonly ILogger<ExpenseController> _logger;
     private readonly IExpenseRepository _expenseRepository;
+    private readonly IUserRepository _userRepository;
 
-    public ExpenseController(ILogger<ExpenseController> logger, IExpenseRepository expenseRepository)
+    public ExpenseController(ILogger<ExpenseController> logger, IExpenseRepository expenseRepository, IUserRepository userRepository)
     {
         _logger = logger;
         _expenseRepository = expenseRepository;
+        _userRepository = userRepository;
     }
 
     [HttpPost]
@@ -25,7 +27,15 @@ public class ExpenseController : ControllerBase
     {
         _logger.LogInformation("{Method}: starting to create a new expense({@Expense})", nameof(CreateAsync), expense);
 
-        var entity = new Expense(expense.UserId, expense.Description, expense.Value);
+        var user = await _userRepository.GetSingleAsync(x => x.Id.Equals(expense.UserId));
+
+        if (user is null)
+        {
+            _logger.LogWarning("{Method}: user '{UserId}' not found", nameof(CreateAsync), expense.UserId);
+            return BadRequest($"User '{expense.UserId}' not found");
+        }
+
+        var entity = new Expense(expense.UserId, expense.Description, expense.Value, expense.Category, expense.DueDate, expense.PaydAt, expense.Period, expense.ExpenseGroupId);
         await _expenseRepository.AddAsync(entity);
 
         _logger.LogInformation("{Method}: the expense({@Expense}) was successfully created", nameof(CreateAsync), entity);
@@ -48,6 +58,9 @@ public class ExpenseController : ControllerBase
 
         entity.Description = command.Description;
         entity.Value = command.Value;
+        entity.Category = command.Category;
+        entity.DueDate = command.DueDate;
+        entity.PaydAt = command.PaydAt;
 
         await _expenseRepository.UpdateAsync(entity);
 
