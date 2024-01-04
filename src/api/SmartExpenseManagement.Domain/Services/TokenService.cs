@@ -23,7 +23,7 @@ public sealed class TokenService : ITokenService
 
     public string GenerateToken(User user)
     {
-        var apiKey = _configuration.GetSection("ApiKey").ToString() ?? string.Empty;
+        var apiKey = _configuration.GetValue<string>("ApiKey") ?? string.Empty;
         var handler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(apiKey);
         var credentials = new SigningCredentials(
