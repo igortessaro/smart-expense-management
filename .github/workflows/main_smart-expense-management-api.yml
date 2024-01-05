@@ -28,6 +28,15 @@ jobs:
       - name: dotnet publish
         run: dotnet publish -c Release ./src/api/SmartExpenseManagement.Api/SmartExpenseManagement.Api.csproj -o ${{env.DOTNET_ROOT}}/myapp
 
+      - name: App Settings Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: '${{env.DOTNET_ROOT}}/myapp/appsettings.Production.json, ${{env.DOTNET_ROOT}}/myapp/appsettings.json'
+        env:
+          App.MongoConnection.ConnectionString: ${{ env.MONGO_CONNECTION_STRING }}
+          App.MongoConnection.DatabaseName: ${{ env.MONGO_DATABASE_NAME }}
+          App.ApiKey: ${{ env.API_KEY }}
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
@@ -40,13 +49,13 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: .net-app
-      
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
