@@ -11,7 +11,7 @@ var headersExposed = new[] { "Date", "Content-Type", "Content-Disposition", "Con
 
 var builder = WebApplication.CreateBuilder(args);
 
-var apiKey = builder.Configuration.GetSection("ApiKey").ToString() ?? string.Empty;
+var apiKey = builder.Configuration.GetValue<string>("ApiKey") ?? string.Empty;
 
 // Add services to the container.
 _ = builder.Services.AddScoped<IUserRepository, UserRepository>();
