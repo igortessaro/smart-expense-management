@@ -28,18 +28,18 @@ jobs:
       - name: dotnet publish
         run: dotnet publish -c Release ./src/api/SmartExpenseManagement.Api/SmartExpenseManagement.Api.csproj -o ${{env.DOTNET_ROOT}}/myapp
 
-      - name: App Settings Variable Substitution
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: '${{env.DOTNET_ROOT}}/myapp/appsettings.Production.json, ${{env.DOTNET_ROOT}}/myapp/appsettings.json'
-        env:
-          ApiKey: ${{ env.API_KEY }}
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
+
+      - name: App Settings Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: '${{env.DOTNET_ROOT}}/myapp/appsettings.Production.json'
+        env:
+          ApiKey: ${{ env.API_KEY }}
 
   deploy:
     runs-on: ubuntu-latest
