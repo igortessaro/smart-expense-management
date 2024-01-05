@@ -8,7 +8,7 @@ using System.Text.Json.Nodes;
 Console.WriteLine("Starting");
 
 var baseUrl = "http://localhost:5224";
-var userLogin = new { login = "igorstessaro57@gmail.com", password = "123456" };
+var userLogin = new { login = "igorstessaro57@gmail.com", password = "" };
 
 using var httpClient = new HttpClient();
 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
