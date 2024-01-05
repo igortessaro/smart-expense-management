@@ -9,3 +9,5 @@ This is a project to help us to management our expenses in the smart way.
 ```shell
 docker compose -f ./tools/docker/docker-compose.yml  -p "smart-expense-management" up --build -d
 ```
+
+[![.NET](https://github.com/igortessaro/smart-expense-management/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/igortessaro/smart-expense-management/actions/workflows/dotnet.yml)
