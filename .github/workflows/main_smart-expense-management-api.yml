@@ -33,9 +33,7 @@ jobs:
         with:
           files: '${{env.DOTNET_ROOT}}/myapp/appsettings.Production.json, ${{env.DOTNET_ROOT}}/myapp/appsettings.json'
         env:
-          App.MongoConnection.ConnectionString: ${{ env.MONGO_CONNECTION_STRING }}
-          App.MongoConnection.DatabaseName: ${{ env.MONGO_DATABASE_NAME }}
-          App.ApiKey: ${{ env.API_KEY }}
+          ApiKey: ${{ env.API_KEY }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
